@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💌%3C/text%3E%3C/svg%3E" />
+  <title>Nur eine kleine Frage 💌</title>
+  <style>
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#ffe7f0;
+      --card:#ffffffd9;
+      --text:#3d2732;
+      --muted:#7a5d6b;
+      --pink:#ff5f9a;
+      --pink2:#ff8ab6;
+      --deep:#c93f76;
+      --line:#f2cddd;
+      --shadow:0 24px 70px rgba(118,46,76,.18);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{min-height:100%}
+    body{
+      margin:0;
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 15%, #fff 0 5%, transparent 6%),
+        radial-gradient(circle at 85% 12%, #ffd2e2 0 8%, transparent 9%),
+        radial-gradient(circle at 80% 80%, #fff 0 7%, transparent 8%),
+        linear-gradient(145deg,var(--bg1),var(--bg2));
+      overflow-x:hidden;
+    }
+
+    body::before, body::after{
+      content:"";
+      position:fixed;
+      border-radius:50%;
+      filter:blur(12px);
+      opacity:.42;
+      z-index:-1;
+      animation:floatBlob 10s ease-in-out infinite alternate;
+    }
+    body::before{
+      width:260px;height:260px;
+      left:-90px;bottom:3vh;
+      background:#ffc4da;
+    }
+    body::after{
+      width:320px;height:320px;
+      right:-120px;top:18vh;
+      background:#ffdce9;
+      animation-delay:-3s;
+    }
+
+    @keyframes floatBlob{
+      from{transform:translate3d(0,0,0) scale(1)}
+      to{transform:translate3d(28px,-24px,0) scale(1.08)}
+    }
+
+    .floating-heart{
+      position:fixed;
+      bottom:-30px;
+      pointer-events:none;
+      user-select:none;
+      opacity:.55;
+      animation:rise linear forwards;
+      z-index:0;
+    }
+
+    @keyframes rise{
+      0%{transform:translateY(0) rotate(0deg) scale(.75); opacity:0}
+      10%{opacity:.52}
+      100%{transform:translateY(-115vh) rotate(22deg) scale(1.15); opacity:0}
+    }
+
+    main{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px 16px;
+      position:relative;
+      z-index:1;
+    }
+
+    .card{
+      width:min(760px,100%);
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      padding:clamp(24px,5vw,54px);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,.76),transparent 35%);
+      pointer-events:none;
+    }
+
+    .screen{
+      display:none;
+      position:relative;
+      z-index:1;
+      animation:fadeUp .45s ease both;
+    }
+    .screen.active{display:block}
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(14px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+
+    .private-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      border:1px solid var(--line);
+      color:#8a6072;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .envelope{
+      font-size:clamp(58px,10vw,88px);
+      display:inline-block;
+      animation:bob 2.4s ease-in-out infinite;
+      filter:drop-shadow(0 10px 12px rgba(170,68,111,.15));
+    }
+
+    @keyframes bob{
+      0%,100%{transform:translateY(0) rotate(-3deg)}
+      50%{transform:translateY(-8px) rotate(3deg)}
+    }
+
+    h1{
+      font-size:clamp(32px,7vw,58px);
+      line-height:1.02;
+      margin:14px auto 14px;
+      letter-spacing:-1.8px;
+      max-width:650px;
+    }
+
+    h2{
+      font-size:clamp(27px,5vw,42px);
+      margin:6px 0 10px;
+      letter-spacing:-1px;
+    }
+
+    p{
+      color:var(--muted);
+      font-size:clamp(16px,2.7vw,19px);
+      line-height:1.65;
+      margin:0 auto 26px;
+      max-width:590px;
+    }
+
+    .tiny{
+      font-size:13px;
+      opacity:.7;
+      margin-top:18px;
+    }
+
+    .question-area{
+      min-height:150px;
+      position:relative;
+      margin-top:18px;
+    }
+
+    .buttons{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+      min-height:72px;
+      position:relative;
+    }
+
+    button, .buttonlike{
+      border:0;
+      border-radius:999px;
+      padding:15px 24px;
+      font:inherit;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      min-width:138px;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    button:focus-visible, input:focus-visible, .option input:focus-visible + span{
+      outline:3px solid rgba(255,95,154,.25);
+      outline-offset:3px;
+    }
+
+    .yes{
+      color:white;
+      background:linear-gradient(135deg,var(--pink),var(--pink2));
+      box-shadow:0 12px 24px rgba(255,95,154,.28);
+    }
+    .yes:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 16px 28px rgba(255,95,154,.34)}
+
+    .no{
+      color:#745563;
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow:0 8px 18px rgba(84,43,60,.08);
+      position:absolute;
+      left:calc(50% + 26px);
+      top:10px;
+      transition:left .16s ease, top .16s ease, transform .16s ease;
+    }
+
+    .yes-wrap{
+      position:absolute;
+      right:calc(50% + 26px);
+      top:10px;
+    }
+
+    .no small{font-weight:600;opacity:.65}
+
+    form{
+      text-align:left;
+      display:grid;
+      gap:20px;
+      margin-top:26px;
+    }
+
+    .field{
+      background:rgba(255,255,255,.72);
+      border:1px solid var(--line);
+      padding:18px;
+      border-radius:20px;
+    }
+
+    label.title{
+      display:block;
+      font-weight:900;
+      margin-bottom:10px;
+      font-size:16px;
+    }
+
+    input[type="date"], input[type="time"], textarea{
+      width:100%;
+      border:1px solid #ead3dd;
+      background:white;
+      color:var(--text);
+      border-radius:14px;
+      padding:13px 14px;
+      font:inherit;
+    }
+
+    textarea{resize:vertical;min-height:88px}
+
+    .choices{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .option{
+      cursor:pointer;
+      position:relative;
+      user-select:none;
+    }
+
+    .option input{
+      position:absolute;
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .option span{
+      min-height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-align:center;
+      padding:12px 10px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      font-weight:800;
+      transition:.18s ease;
+    }
+
+    .option input:checked + span{
+      border-color:var(--pink);
+      background:#fff1f6;
+      transform:translateY(-1px);
+      box-shadow:0 8px 18px rgba(255,95,154,.12);
+    }
+
+    .submit{
+      width:100%;
+      border-radius:16px;
+      padding:16px 20px;
+      color:white;
+      background:linear-gradient(135deg,var(--deep),var(--pink));
+      box-shadow:0 12px 25px rgba(201,63,118,.24);
+    }
+
+    .summary{
+      margin:24px auto;
+      text-align:left;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:rgba(255,255,255,.78);
+      padding:18px;
+      max-width:560px;
+    }
+
+    .summary-row{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:10px;
+      padding:8px 0;
+      border-bottom:1px dashed #efd6e1;
+    }
+    .summary-row:last-child{border-bottom:0}
+    .summary-row strong{color:#8b3c62}
+
+    .final-actions{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .secondary{
+      color:#74485c;
+      background:#fff;
+      border:1px solid var(--line);
+    }
+
+    .mail{
+      color:#fff;
+      background:linear-gradient(135deg,var(--pink),var(--deep));
+      box-shadow:0 10px 24px rgba(201,63,118,.22);
+    }
+
+    .status{
+      min-height:24px;
+      margin-top:14px;
+      font-size:14px;
+      color:#8b526b;
+      font-weight:700;
+    }
+
+    .spark{
+      position:absolute;
+      pointer-events:none;
+      font-size:22px;
+      animation:pop 850ms ease-out forwards;
+      z-index:10;
+    }
+
+    @keyframes pop{
+      0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}
+      25%{opacity:1}
+      100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.35) rotate(25deg)}
+    }
+
+
+    .mail-picker{
+      margin:20px auto 0;
+      max-width:560px;
+      background:rgba(255,255,255,.82);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+      animation:fadeUp .28s ease both;
+    }
+
+    .picker-title{
+      margin:0 0 14px;
+      font-weight:900;
+      color:var(--text);
+      font-size:16px;
+    }
+
+    .picker-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .provider{
+      width:100%;
+      min-width:0;
+      border-radius:14px;
+      padding:13px 14px;
+      border:1px solid var(--line);
+      background:white;
+      color:var(--text);
+      box-shadow:none;
+    }
+
+    .provider:hover{
+      transform:translateY(-1px);
+      box-shadow:0 8px 18px rgba(84,43,60,.08);
+    }
+
+    .apple{
+      background:#f8f8fb;
+    }
+
+    .gmail{
+      background:#fff8f8;
+    }
+
+    .outlook{
+      background:#f7fbff;
+    }
+
+    .yahoo{
+      background:#fbf7ff;
+    }
+
+    .share{
+      background:#fff7fb;
+    }
+
+    .copy-provider{
+      background:#fffdf7;
+    }
+
+    .file-provider{
+      background:#f8fff9;
+    }
+
+    .cancel{
+      background:#fafafa;
+      color:#7a5d6b;
+    }
+
+    @media (max-width:600px){
+      .card{padding:26px 18px;border-radius:24px}
+      .choices{grid-template-columns:1fr}
+      .question-area{min-height:178px}
+      .yes-wrap{right:auto;left:14%;top:12px}
+      .no{left:56%;top:12px}
+      .summary-row{grid-template-columns:1fr;gap:2px}
+      .picker-grid{grid-template-columns:1fr}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card" id="card">
+      <div class="screen active" id="screen-question">
+        <div class="private-badge">💗 Nur für dich</div>
+        <div class="envelope">💌</div>
+        <h1 id="headline">Ich hab da eine kleine Frage an dich …</h1>
+        <p id="intro">
+          Ich wollte dich nicht einfach nur langweilig fragen.
+          Also habe ich dir etwas Kleines gebaut. 💗
+        </p>
+
+        <div class="question-area" id="questionArea">
+          <h2>Gehst du mit mir auf ein Date? 🥹</h2>
+          <div class="buttons" id="buttonsArea">
+            <div class="yes-wrap">
+              <button class="yes" id="yesBtn" type="button">Ja, sehr gern 💗</button>
+            </div>
+            <button class="no" id="noBtn" type="button">Nein 🙈</button>
+          </div>
+          <p class="tiny" id="tease">Das „Nein“ sieht übrigens etwas nervös aus.</p>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-form">
+        <div class="envelope">🌷</div>
+        <h2>Das war eindeutig die richtige Entscheidung.</h2>
+        <p>Jetzt darfst du bestimmen. Ich stelle mich ausnahmsweise freiwillig unter demokratische Kontrolle.</p>
+
+        <form id="dateForm">
+          <div class="field">
+            <label class="title" for="date">📅 Welcher Tag passt dir?</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+
+          <div class="field">
+            <label class="title" for="time">🕰️ Welche Uhrzeit?</label>
+            <input id="time" name="time" type="time" required />
+          </div>
+
+          <div class="field">
+            <span class="title">✨ Worauf hättest du Lust?</span>
+            <div class="choices">
+              <label class="option">
+                <input type="radio" name="activity" value="Café ☕" required />
+                <span>☕ Café</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Essen 🍝" />
+                <span>🍝 Essen</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Brunch 🥐" />
+                <span>🥐 Brunch</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Kino 🎬" />
+                <span>🎬 Kino</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Zoo 🦦" />
+                <span>🦦 Zoo</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Aquarium 🐠" />
+                <span>🐠 Aquarium</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Spaziergang 🌿" />
+                <span>🌿 Spaziergang</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Picknick 🧺" />
+                <span>🧺 Picknick</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Minigolf ⛳" />
+                <span>⛳ Minigolf</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Bowling 🎳" />
+                <span>🎳 Bowling</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Museum 🖼️" />
+                <span>🖼️ Museum</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Zusammen kochen 🍳" />
+                <span>🍳 Zusammen kochen</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Cocktails / Bar 🍸" />
+                <span>🍸 Cocktails / Bar</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Etwas Verrücktes ✨" />
+                <span>✨ Etwas Verrücktes</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Du entscheidest 💗" />
+                <span>💗 Du entscheidest</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="activity" value="Überrasch mich 🎁" />
+                <span>🎁 Überrasch mich</span>
+              </label>
+            </div>
+            <div style="margin-top:12px">
+              <label class="title" for="customActivity" style="margin-bottom:8px">Oder deine eigene Idee 💡</label>
+              <input id="customActivity" name="customActivity" type="text"
+                     placeholder="Zum Beispiel: Flohmarkt, Therme, Nachtspaziergang …"
+                     style="width:100%;border:1px solid #ead3dd;background:white;color:var(--text);border-radius:14px;padding:13px 14px;font:inherit;" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="title" for="note">💬 Noch ein Wunsch? <span style="font-weight:600;opacity:.55">(optional)</span></label>
+            <textarea id="note" name="note" placeholder="Zum Beispiel: kein Horrorfilm, ich kenne deine Absichten 😌"></textarea>
+          </div>
+
+          <button class="submit" type="submit">Unser Date festhalten 💞</button>
+        </form>
+      </div>
+
+      <div class="screen" id="screen-final">
+        <div class="envelope">💖</div>
+        <h2>Okay. Jetzt ist es offiziell.</h2>
+        <p>Deine Antwort wurde auf diesem Gerät gespeichert. Und irgendwo freut sich gerade vermutlich jemand ziemlich doll.</p>
+
+        <div class="summary" id="summary"></div>
+
+        <div class="final-actions">
+          <button class="mail" id="replyBtn" type="button">Antwort zurückschicken 💌</button>
+          <button class="secondary" id="copyBtn" type="button">Antwort kopieren 📋</button>
+          <button class="secondary" id="downloadBtn" type="button">Als Datei speichern ⤓</button>
+        </div>
+
+        <div class="mail-picker" id="mailPicker" hidden>
+          <p class="picker-title">Wie möchtest du antworten?</p>
+          <div class="picker-grid">
+            <button class="provider apple" id="appleMailBtn" type="button">🍎 Apple Mail / iCloud</button>
+            <button class="provider gmail" id="gmailBtn" type="button">✉️ Gmail im Browser</button>
+            <button class="provider outlook" id="outlookBtn" type="button">📨 Outlook im Browser</button>
+            <button class="provider yahoo" id="yahooBtn" type="button">💜 Yahoo Mail</button>
+            <button class="provider share" id="shareBtn" type="button">↗️ Teilen</button>
+            <button class="provider copy-provider" id="copyMailBtn" type="button">📋 Mailtext kopieren</button>
+            <button class="provider file-provider" id="saveMailBtn" type="button">💾 Antwort speichern</button>
+            <button class="provider cancel" id="cancelPickerBtn" type="button">← Zurück</button>
+          </div>
+          <p class="tiny">Apple Mail/iCloud ist für iPhone, iPad und Mac gedacht. Gmail, Outlook und Yahoo öffnen sich direkt im Browser.</p>
+        </div>
+
+        <div class="status" id="status"></div>
+        <p class="tiny">Nichts wird heimlich verschickt. Du entscheidest selbst, wie die fertige Antwort zurückgeht. 💗</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* =========================================================
+       EINMAL ANPASSEN, DANN DIE DATEI VERSCHICKEN
+       Trage hier DEINE E-Mail-Adresse und optional Namen ein.
+       ========================================================= */
+    const CONFIG = {
+      returnEmail: "merlinsplate@web.de",         // HIER deine E-Mail-Adresse eintragen
+      senderName: "Merlin",    // dein Name
+      recipientName: "Deborah"        // optional, z.B. "Deborah"
+    };
+
+    const $ = (s) => document.querySelector(s);
+    const questionScreen = $("#screen-question");
+    const formScreen = $("#screen-form");
+    const finalScreen = $("#screen-final");
+    const noBtn = $("#noBtn");
+    const yesBtn = $("#yesBtn");
+    const questionArea = $("#questionArea");
+    const dateForm = $("#dateForm");
+    const summary = $("#summary");
+    const statusEl = $("#status");
+
+    let savedAnswer = null;
+    let escapeCount = 0;
+
+    const today = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    $("#date").min = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+
+    if (CONFIG.recipientName.trim()) {
+      $("#headline").textContent = `${CONFIG.recipientName}, ich hab da eine kleine Frage an dich …`;
+    }
+
+    function showScreen(screen){
+      [questionScreen, formScreen, finalScreen].forEach(s => s.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function moveNoButton(){
+      escapeCount++;
+
+      const areaRect = questionArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxX = Math.max(12, areaRect.width - btnRect.width - 18);
+      const maxY = Math.max(56, areaRect.height - btnRect.height - 14);
+
+      const x = 8 + Math.random() * Math.max(10, maxX - 8);
+      const y = 56 + Math.random() * Math.max(8, maxY - 56);
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+      noBtn.style.transform = `rotate(${(Math.random()*10)-5}deg)`;
+
+      const phrases = [
+        "Netter Versuch 😇",
+        "Der Button hat andere Pläne.",
+        "Fast. Wirklich fast.",
+        "Er möchte offenbar nicht gedrückt werden.",
+        "Das Universum wirkt erstaunlich parteiisch.",
+        "Ich glaube, das zählt langsam als Schicksal. 💗"
+      ];
+      $("#tease").textContent = phrases[Math.min(escapeCount - 1, phrases.length - 1)];
+    }
+
+    ["pointerenter","pointerdown","touchstart","focus"].forEach(evt => {
+      noBtn.addEventListener(evt, (e) => {
+        if (evt === "pointerdown" || evt === "touchstart") e.preventDefault();
+        moveNoButton();
+      }, {passive:false});
+    });
+
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    yesBtn.addEventListener("click", () => {
+      burstHearts(yesBtn, 18);
+      setTimeout(() => showScreen(formScreen), 280);
+    });
+
+    function formatDate(value){
+      const [y,m,d] = value.split("-").map(Number);
+      return new Intl.DateTimeFormat("de-DE", {
+        weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"
+      }).format(new Date(y, m-1, d));
+    }
+
+    function buildAnswerText(a){
+      const hi = CONFIG.senderName.trim() ? `Hey ${CONFIG.senderName},` : "Hey,";
+      const note = a.note ? `\nMein Wunsch dazu: ${a.note}` : "";
+      return `${hi}
+
+ja, ich gehe mit dir auf ein Date. 💗
+
+📅 Datum: ${a.dateFormatted}
+🕰️ Uhrzeit: ${a.time} Uhr
+✨ Idee: ${a.activity}${note}
+
+Sieht so aus, als müsstest du jetzt nur noch auftauchen. 😌`;
+    }
+
+    function renderSummary(a){
+      const safe = (value) => {
+        const div = document.createElement("div");
+        div.textContent = value || "—";
+        return div.innerHTML;
+      };
+
+      summary.innerHTML = `
+        <div class="summary-row"><strong>Datum</strong><span>${safe(a.dateFormatted)}</span></div>
+        <div class="summary-row"><strong>Uhrzeit</strong><span>${safe(a.time)} Uhr</span></div>
+        <div class="summary-row"><strong>Plan</strong><span>${safe(a.activity)}</span></div>
+        ${a.note ? `<div class="summary-row"><strong>Wunsch</strong><span>${safe(a.note)}</span></div>` : ""}
+      `;
+    }
+
+    dateForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(dateForm);
+
+      savedAnswer = {
+        accepted: true,
+        date: data.get("date"),
+        dateFormatted: formatDate(data.get("date")),
+        time: data.get("time"),
+        activity: String(data.get("customActivity") || "").trim() || data.get("activity"),
+        note: String(data.get("note") || "").trim(),
+        savedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem("dateInvitationAnswer", JSON.stringify(savedAnswer));
+      renderSummary(savedAnswer);
+      showScreen(finalScreen);
+      burstHearts($("#card"), 26);
+    });
+
+    const mailPicker = $("#mailPicker");
+
+    function emailPayload(){
+      if (!savedAnswer) return null;
+      return {
+        to: CONFIG.returnEmail.trim(),
+        subject: "Meine Antwort auf deine Date-Einladung 💌",
+        body: buildAnswerText(savedAnswer)
+      };
+    }
+
+    function mailtoUrl(p){
+      return `mailto:${encodeURIComponent(p.to)}?subject=${encodeURIComponent(p.subject)}&body=${encodeURIComponent(p.body)}`;
+    }
+
+    $("#replyBtn").addEventListener("click", () => {
+      if (!savedAnswer) return;
+      mailPicker.hidden = false;
+      statusEl.textContent = "";
+      mailPicker.scrollIntoView({behavior:"smooth", block:"nearest"});
+    });
+
+    $("#cancelPickerBtn").addEventListener("click", () => {
+      mailPicker.hidden = true;
+      statusEl.textContent = "";
+    });
+
+    $("#appleMailBtn").addEventListener("click", () => {
+      const p = emailPayload();
+      if (!p) return;
+
+      if (!p.to) {
+        statusEl.textContent = "In der HTML-Datei ist noch keine Rücksende-Adresse eingetragen. Apple Mail wird ohne Empfänger geöffnet.";
+      } else {
+        statusEl.textContent = "Apple Mail / iCloud wird geöffnet …";
+      }
+
+      // On iPhone/iPad/Mac this opens the configured Mail app, typically iCloud Mail.
+      window.location.href = mailtoUrl(p);
+    });
+
+    $("#gmailBtn").addEventListener("click", () => {
+      const p = emailPayload();
+      if (!p) return;
+
+      statusEl.textContent = p.to
+        ? "Gmail wird im Browser geöffnet …"
+        : "Keine Rücksende-Adresse eingetragen. Gmail wird ohne Empfänger geöffnet.";
+
+      const url =
+        "https://mail.google.com/mail/?view=cm&fs=1" +
+        "&to=" + encodeURIComponent(p.to) +
+        "&su=" + encodeURIComponent(p.subject) +
+        "&body=" + encodeURIComponent(p.body);
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    $("#outlookBtn").addEventListener("click", () => {
+      const p = emailPayload();
+      if (!p) return;
+
+      statusEl.textContent = p.to
+        ? "Outlook wird im Browser geöffnet …"
+        : "Keine Rücksende-Adresse eingetragen. Outlook wird ohne Empfänger geöffnet.";
+
+      const url =
+        "https://outlook.live.com/mail/0/deeplink/compose" +
+        "?to=" + encodeURIComponent(p.to) +
+        "&subject=" + encodeURIComponent(p.subject) +
+        "&body=" + encodeURIComponent(p.body);
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    $("#yahooBtn").addEventListener("click", () => {
+      const p = emailPayload();
+      if (!p) return;
+
+      statusEl.textContent = p.to
+        ? "Yahoo Mail wird im Browser geöffnet …"
+        : "Keine Rücksende-Adresse eingetragen. Yahoo wird ohne Empfänger geöffnet.";
+
+      const url =
+        "https://compose.mail.yahoo.com/?" +
+        "to=" + encodeURIComponent(p.to) +
+        "&subject=" + encodeURIComponent(p.subject) +
+        "&body=" + encodeURIComponent(p.body);
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    $("#shareBtn").addEventListener("click", async () => {
+      const p = emailPayload();
+      if (!p) return;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: p.subject,
+            text: p.body
+          });
+          statusEl.textContent = "Antwort zum Teilen geöffnet. 💗";
+        } catch (err) {
+          if (err && err.name !== "AbortError") {
+            statusEl.textContent = "Teilen wurde vom Browser blockiert. Nutze Apple Mail, Gmail, Outlook, Yahoo oder Kopieren.";
+          }
+        }
+      } else {
+        statusEl.textContent = "Direktes Teilen wird auf diesem Gerät nicht unterstützt. Kopieren funktioniert weiterhin.";
+      }
+    });
+
+    $("#copyMailBtn").addEventListener("click", async () => {
+      const p = emailPayload();
+      if (!p) return;
+      try {
+        await navigator.clipboard.writeText(p.body);
+        statusEl.textContent = "Mailtext kopiert. 📋";
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = p.body;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        statusEl.textContent = "Mailtext kopiert. 📋";
+      }
+    });
+
+    $("#saveMailBtn").addEventListener("click", () => {
+      const p = emailPayload();
+      if (!p) return;
+      const blob = new Blob([p.body], {type:"text/plain;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "meine_date_antwort.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      statusEl.textContent = "Antwort als Datei gespeichert. 💌";
+    });
+
+    $("#copyBtn").addEventListener("click", async () => {
+      if (!savedAnswer) return;
+      const text = buildAnswerText(savedAnswer);
+      try {
+        await navigator.clipboard.writeText(text);
+        statusEl.textContent = "Antwort kopiert. Technologie hat heute überraschend funktioniert. 💗";
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        statusEl.textContent = "Antwort kopiert. 💗";
+      }
+    });
+
+    $("#downloadBtn").addEventListener("click", () => {
+      if (!savedAnswer) return;
+      const blob = new Blob([buildAnswerText(savedAnswer)], {type:"text/plain;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "meine_date_antwort.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      statusEl.textContent = "Antwort als Datei gespeichert. 💌";
+    });
+
+    function burstHearts(origin, amount=18){
+      const rect = origin.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      const icons = ["💗","💖","💕","✨","🌸"];
+
+      for(let i=0;i<amount;i++){
+        const el = document.createElement("span");
+        el.className = "spark";
+        el.textContent = icons[Math.floor(Math.random()*icons.length)];
+        el.style.left = `${cx}px`;
+        el.style.top = `${cy}px`;
+        el.style.setProperty("--dx", `${(Math.random()-.5)*320}px`);
+        el.style.setProperty("--dy", `${-40 - Math.random()*240}px`);
+        el.style.animationDelay = `${Math.random()*120}ms`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1100);
+      }
+    }
+
+    function spawnFloatingHeart(){
+      const el = document.createElement("span");
+      el.className = "floating-heart";
+      el.textContent = Math.random() > .5 ? "♡" : "♥";
+      el.style.left = `${Math.random()*100}vw`;
+      el.style.fontSize = `${14 + Math.random()*20}px`;
+      el.style.animationDuration = `${7 + Math.random()*6}s`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 14000);
+    }
+
+    setInterval(spawnFloatingHeart, 900);
+    for(let i=0;i<5;i++) setTimeout(spawnFloatingHeart, i*250);
+  </script>
+</body>
+</html>
